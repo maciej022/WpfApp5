@@ -21,6 +21,7 @@
         <Button Content="Usuń" HorizontalAlignment="Left" Height="22" Margin="573,211,0,0" VerticalAlignment="Top" Width="65" Click="Button_Click_2"/>
         <Button Content="Pokaż Ilość Włosów" HorizontalAlignment="Left" Height="50" Margin="17,432,0,0" VerticalAlignment="Top" Width="141"/>
         <Button Content="Reset" HorizontalAlignment="Left" Height="50" Margin="177,432,0,0" VerticalAlignment="Top" Width="141"/>
+        <Label Content="PROGRAM DO LICZENIA WLOSOW NA GLOWIE"  HorizontalAlignment="Left" Height="52" Margin="46,26,0,0" VerticalAlignment="Top" Width="712"/>
 
     </Grid>
 </Window>
