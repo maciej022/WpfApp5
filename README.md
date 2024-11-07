@@ -1,88 +1,45 @@
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
+<Window x:Class="WpfApp3.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp3"
+        mc:Ignorable="d"
+        Title="Edytor tekstu" Height="600" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-namespace TextEditorApp
-{
-    public partial class MainWindow : Window
-    {
-        public MainWindow()
-        {
-            InitializeComponent();
-            KrojCzcionkiComboBox.SelectedIndex = 0;
-        }
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10">
+            <CheckBox x:Name="PogrubienieCheckBox" Content="Pogrubienie" FontWeight="Bold" Margin="5" Click="PogrubienieCheckBox_Click"/>
+            <CheckBox x:Name="KursywaCheckBox" Content="Kursywa" FontStyle="Italic" Margin="5" Click="KursywaCheckBox_Click"/>
+            <CheckBox x:Name="PodkreslenieCheckBox" Content="Podkreślenie" Margin="5" Click="PodkreslenieCheckBox_Click"/>
+            <Slider x:Name="RozmiarCzcionkiSlider" Minimum="8" Maximum="48" Value="12" Width="100" Orientation="Vertical" Height="55" ValueChanged="RozmiarCzcionkiSlider_ValueChanged"/>
+            <TextBlock Text="Rozmiar" VerticalAlignment="Center" Margin="5"/>
+            
+            <RadioButton x:Name="CzarnyKolor" Content="Czarny" Margin="5" Click="KolorRadioButton_Click"/>
+            <RadioButton x:Name="CzerwonyKolor" Content="Czerwony" Foreground="Red" Margin="5" Click="KolorRadioButton_Click"/>
+            <RadioButton x:Name="NiebieskiKolor" Content="Niebieski" Foreground="Blue" Margin="5" Click="KolorRadioButton_Click"/>
 
-        private void PogrubienieCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, PogrubienieCheckBox.IsChecked == true ? FontWeights.Bold : FontWeights.Normal);
-            AktualizujPasekPostepu();
-        }
+            <ComboBox x:Name="KrojCzcionkiComboBox" Width="150" Margin="5" SelectionChanged="KrojCzcionkiComboBox_SelectionChanged">
+                <ComboBoxItem Content="Arial"/>
+                <ComboBoxItem Content="Times New Roman"/>
+                <ComboBoxItem Content="Calibri"/>
+            </ComboBox>
+        </StackPanel>
 
-        private void KursywaCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, KursywaCheckBox.IsChecked == true ? FontStyles.Italic : FontStyles.Normal);
-            AktualizujPasekPostepu();
-        }
+        <RichTextBox x:Name="EdytorTekstu" Grid.Row="1" Margin="10">
+            <RichTextBox.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="LightGray" Offset="0.0"/>
+                    <GradientStop Color="White" Offset="1.0"/>
+                </LinearGradientBrush>
+            </RichTextBox.Background>
+        </RichTextBox>
 
-        private void PodkreslenieCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, PodkreslenieCheckBox.IsChecked == true ? TextDecorations.Underline : null);
-            AktualizujPasekPostepu();
-        }
-
-        private void RozmiarCzcionkiSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.FontSizeProperty, RozmiarCzcionkiSlider.Value);
-            AktualizujPasekPostepu();
-        }
-
-        private void CzarnyKolor_Click(object sender, RoutedEventArgs e)
-        {
-            ZmienKolorCzcionki(Brushes.Black);
-            AktualizujPasekPostepu();
-        }
-
-        private void CzerwonyKolor_Click(object sender, RoutedEventArgs e)
-        {
-            ZmienKolorCzcionki(Brushes.Red);
-            AktualizujPasekPostepu();
-        }
-
-        private void NiebieskiKolor_Click(object sender, RoutedEventArgs e)
-        {
-            ZmienKolorCzcionki(Brushes.Blue);
-            AktualizujPasekPostepu();
-        }
-
-        private void KrojCzcionkiComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.FontFamilyProperty, new FontFamily((KrojCzcionkiComboBox.SelectedItem as ComboBoxItem)?.Content.ToString()));
-            AktualizujPasekPostepu();
-        }
-
-        private void ZmienKolorCzcionki(Brush kolor)
-        {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, kolor);
-        }
-
-        private void AktualizujPasekPostepu()
-        {
-            int ustawieniaUzyte = 0;
-            if (PogrubienieCheckBox.IsChecked == true) ustawieniaUzyte++;
-            if (KursywaCheckBox.IsChecked == true) ustawieniaUzyte++;
-            if (PodkreslenieCheckBox.IsChecked == true) ustawieniaUzyte++;
-            if (RozmiarCzcionkiSlider.Value != 12) ustawieniaUzyte++;
-            if (CzarnyKolor.IsChecked == true || CzerwonyKolor.IsChecked == true || NiebieskiKolor.IsChecked == true) ustawieniaUzyte++;
-            if (KrojCzcionkiComboBox.SelectedIndex != 0) ustawieniaUzyte++;
-
-            PasekPostepu.Value = ustawieniaUzyte;
-        }
-    }
-}
+        <ProgressBar x:Name="PasekPostepu" Grid.Row="2" Height="20" Margin="10" Maximum="6"/>
+    </Grid>
+</Window>
