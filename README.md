@@ -13,54 +13,80 @@ namespace TextEditorApp
             KrojCzcionkiComboBox.SelectedIndex = 0;
         }
 
-        private void ZmienFormat(object sender, RoutedEventArgs e)
+        private void PogrubienieCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            AktualizujFormatowanieTekstu();
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+            AktualizujPasekPostepu();
         }
 
-        private void RozmiarCzcionkiSlider_Zmieniono(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void PogrubienieCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            AktualizujFormatowanieTekstu();
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
+            AktualizujPasekPostepu();
         }
 
-        private void ZmienKolor(object sender, RoutedEventArgs e)
+        private void KursywaCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            AktualizujFormatowanieTekstu();
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Italic);
+            AktualizujPasekPostepu();
         }
 
-        private void KrojCzcionkiComboBox_Zmieniono(object sender, SelectionChangedEventArgs e)
+        private void KursywaCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            AktualizujFormatowanieTekstu();
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Normal);
+            AktualizujPasekPostepu();
         }
 
-        private void AktualizujFormatowanieTekstu()
+        private void PodkreslenieCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
+            AktualizujPasekPostepu();
+        }
+
+        private void PodkreslenieCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, null);
+            AktualizujPasekPostepu();
+        }
+
+        private void RozmiarCzcionkiSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
             zakresTekstu.ApplyPropertyValue(TextElement.FontSizeProperty, RozmiarCzcionkiSlider.Value);
+            AktualizujPasekPostepu();
+        }
+
+        private void CzarnyKolor_Checked(object sender, RoutedEventArgs e)
+        {
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            AktualizujPasekPostepu();
+        }
+
+        private void CzerwonyKolor_Checked(object sender, RoutedEventArgs e)
+        {
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
+            AktualizujPasekPostepu();
+        }
+
+        private void NiebieskiKolor_Checked(object sender, RoutedEventArgs e)
+        {
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Blue);
+            AktualizujPasekPostepu();
+        }
+
+        private void KrojCzcionkiComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
             zakresTekstu.ApplyPropertyValue(TextElement.FontFamilyProperty, new FontFamily((KrojCzcionkiComboBox.SelectedItem as ComboBoxItem)?.Content.ToString()));
-
-            if (PogrubienieCheckBox.IsChecked == true)
-                zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
-            else
-                zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
-
-            if (KursywaCheckBox.IsChecked == true)
-                zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Italic);
-            else
-                zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Normal);
-
-            if (PodkreslenieCheckBox.IsChecked == true)
-                zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
-            else
-                zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, null);
-
-            if (CzarnyKolor.IsChecked == true)
-                zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-            else if (CzerwonyKolor.IsChecked == true)
-                zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
-            else if (NiebieskiKolor.IsChecked == true)
-                zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Blue);
-
             AktualizujPasekPostepu();
         }
 
