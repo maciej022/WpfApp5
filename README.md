@@ -13,37 +13,37 @@ namespace TextEditorApp
             KrojCzcionkiComboBox.SelectedIndex = 0;
         }
 
-        public void ZmienFormat(object sender, RoutedEventArgs e)
+        private void ZmienFormat(object sender, RoutedEventArgs e)
         {
             AktualizujFormatowanieTekstu();
         }
 
-        public void RozmiarCzcionkiSlider_Zmieniono(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void RozmiarCzcionkiSlider_Zmieniono(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             AktualizujFormatowanieTekstu();
         }
 
-        public void ZmienKolor(object sender, RoutedEventArgs e)
+        private void ZmienKolor(object sender, RoutedEventArgs e)
         {
             AktualizujFormatowanieTekstu();
         }
 
-        public void KrojCzcionkiComboBox_Zmieniono(object sender, SelectionChangedEventArgs e)
+        private void KrojCzcionkiComboBox_Zmieniono(object sender, SelectionChangedEventArgs e)
         {
             AktualizujFormatowanieTekstu();
         }
 
-        public void AktualizujFormatowanieTekstu()
+        private void AktualizujFormatowanieTekstu()
         {
             var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
             zakresTekstu.ApplyPropertyValue(TextElement.FontSizeProperty, RozmiarCzcionkiSlider.Value);
             zakresTekstu.ApplyPropertyValue(TextElement.FontFamilyProperty, new FontFamily((KrojCzcionkiComboBox.SelectedItem as ComboBoxItem)?.Content.ToString()));
-            
+
             if (PogrubienieCheckBox.IsChecked == true)
                 zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
             else
                 zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
-            
+
             if (KursywaCheckBox.IsChecked == true)
                 zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Italic);
             else
@@ -64,7 +64,7 @@ namespace TextEditorApp
             AktualizujPasekPostepu();
         }
 
-        public void AktualizujPasekPostepu()
+        private void AktualizujPasekPostepu()
         {
             int ustawieniaUzyte = 0;
             if (PogrubienieCheckBox.IsChecked == true) ustawieniaUzyte++;
