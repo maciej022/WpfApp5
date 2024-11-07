@@ -1,42 +1,80 @@
-<Window x:Class="TextEditorApp.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Edytor Tekstu" Height="600" Width="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="10">
-            <CheckBox x:Name="PogrubienieCheckBox" Content="Pogrubienie" FontWeight="Bold" Margin="5" Checked="ZmienFormat" Unchecked="ZmienFormat"/>
-            <CheckBox x:Name="KursywaCheckBox" Content="Kursywa" FontStyle="Italic" Margin="5" Checked="ZmienFormat" Unchecked="ZmienFormat"/>
-            <CheckBox x:Name="PodkreslenieCheckBox" Content="Podkreślenie" TextDecorations="Underline" Margin="5" Checked="ZmienFormat" Unchecked="ZmienFormat"/>
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
+
+namespace TextEditorApp
+{
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+            KrojCzcionkiComboBox.SelectedIndex = 0;
+        }
+
+        public void ZmienFormat(object sender, RoutedEventArgs e)
+        {
+            AktualizujFormatowanieTekstu();
+        }
+
+        public void RozmiarCzcionkiSlider_Zmieniono(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            AktualizujFormatowanieTekstu();
+        }
+
+        public void ZmienKolor(object sender, RoutedEventArgs e)
+        {
+            AktualizujFormatowanieTekstu();
+        }
+
+        public void KrojCzcionkiComboBox_Zmieniono(object sender, SelectionChangedEventArgs e)
+        {
+            AktualizujFormatowanieTekstu();
+        }
+
+        public void AktualizujFormatowanieTekstu()
+        {
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(TextElement.FontSizeProperty, RozmiarCzcionkiSlider.Value);
+            zakresTekstu.ApplyPropertyValue(TextElement.FontFamilyProperty, new FontFamily((KrojCzcionkiComboBox.SelectedItem as ComboBoxItem)?.Content.ToString()));
             
-            <Slider x:Name="RozmiarCzcionkiSlider" Minimum="8" Maximum="48" Value="12" Width="100" Margin="5" ValueChanged="RozmiarCzcionkiSlider_Zmieniono"/>
-            <TextBlock Text="Rozmiar" VerticalAlignment="Center" Margin="5"/>
+            if (PogrubienieCheckBox.IsChecked == true)
+                zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+            else
+                zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
             
-            <RadioButton x:Name="CzarnyKolor" Content="Czarny" Margin="5" Checked="ZmienKolor"/>
-            <RadioButton x:Name="CzerwonyKolor" Content="Czerwony" Foreground="Red" Margin="5" Checked="ZmienKolor"/>
-            <RadioButton x:Name="NiebieskiKolor" Content="Niebieski" Foreground="Blue" Margin="5" Checked="ZmienKolor"/>
-            
-            <ComboBox x:Name="KrojCzcionkiComboBox" Width="150" Margin="5" SelectionChanged="KrojCzcionkiComboBox_Zmieniono">
-                <ComboBoxItem Content="Arial"/>
-                <ComboBoxItem Content="Times New Roman"/>
-                <ComboBoxItem Content="Calibri"/>
-            </ComboBox>
-        </StackPanel>
-        
-        <RichTextBox x:Name="EdytorTekstu" Grid.Row="1" Margin="10">
-            <RichTextBox.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="LightGray" Offset="0.0"/>
-                    <GradientStop Color="White" Offset="1.0"/>
-                </LinearGradientBrush>
-            </RichTextBox.Background>
-        </RichTextBox>
-        
-        <ProgressBar x:Name="PasekPostepu" Grid.Row="2" Height="20" Margin="10" Maximum="6"/>
-    </Grid>
-</Window>
+            if (KursywaCheckBox.IsChecked == true)
+                zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Italic);
+            else
+                zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Normal);
+
+            if (PodkreslenieCheckBox.IsChecked == true)
+                zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
+            else
+                zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, null);
+
+            if (CzarnyKolor.IsChecked == true)
+                zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            else if (CzerwonyKolor.IsChecked == true)
+                zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
+            else if (NiebieskiKolor.IsChecked == true)
+                zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Blue);
+
+            AktualizujPasekPostepu();
+        }
+
+        public void AktualizujPasekPostepu()
+        {
+            int ustawieniaUzyte = 0;
+            if (PogrubienieCheckBox.IsChecked == true) ustawieniaUzyte++;
+            if (KursywaCheckBox.IsChecked == true) ustawieniaUzyte++;
+            if (PodkreslenieCheckBox.IsChecked == true) ustawieniaUzyte++;
+            if (RozmiarCzcionkiSlider.Value != 12) ustawieniaUzyte++;
+            if (CzarnyKolor.IsChecked == true || CzerwonyKolor.IsChecked == true || NiebieskiKolor.IsChecked == true) ustawieniaUzyte++;
+            if (KrojCzcionkiComboBox.SelectedIndex != 0) ustawieniaUzyte++;
+
+            PasekPostepu.Value = ustawieniaUzyte;
+        }
+    }
+}
