@@ -13,45 +13,24 @@ namespace TextEditorApp
             KrojCzcionkiComboBox.SelectedIndex = 0;
         }
 
-        private void PogrubienieCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void PogrubienieCheckBox_Click(object sender, RoutedEventArgs e)
         {
             var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+            zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, PogrubienieCheckBox.IsChecked == true ? FontWeights.Bold : FontWeights.Normal);
             AktualizujPasekPostepu();
         }
 
-        private void PogrubienieCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        private void KursywaCheckBox_Click(object sender, RoutedEventArgs e)
         {
             var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Normal);
+            zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, KursywaCheckBox.IsChecked == true ? FontStyles.Italic : FontStyles.Normal);
             AktualizujPasekPostepu();
         }
 
-        private void KursywaCheckBox_Checked(object sender, RoutedEventArgs e)
+        private void PodkreslenieCheckBox_Click(object sender, RoutedEventArgs e)
         {
             var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Italic);
-            AktualizujPasekPostepu();
-        }
-
-        private void KursywaCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, FontStyles.Normal);
-            AktualizujPasekPostepu();
-        }
-
-        private void PodkreslenieCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, TextDecorations.Underline);
-            AktualizujPasekPostepu();
-        }
-
-        private void PodkreslenieCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, null);
+            zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, PodkreslenieCheckBox.IsChecked == true ? TextDecorations.Underline : null);
             AktualizujPasekPostepu();
         }
 
@@ -62,24 +41,21 @@ namespace TextEditorApp
             AktualizujPasekPostepu();
         }
 
-        private void CzarnyKolor_Checked(object sender, RoutedEventArgs e)
+        private void CzarnyKolor_Click(object sender, RoutedEventArgs e)
         {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
+            ZmienKolorCzcionki(Brushes.Black);
             AktualizujPasekPostepu();
         }
 
-        private void CzerwonyKolor_Checked(object sender, RoutedEventArgs e)
+        private void CzerwonyKolor_Click(object sender, RoutedEventArgs e)
         {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
+            ZmienKolorCzcionki(Brushes.Red);
             AktualizujPasekPostepu();
         }
 
-        private void NiebieskiKolor_Checked(object sender, RoutedEventArgs e)
+        private void NiebieskiKolor_Click(object sender, RoutedEventArgs e)
         {
-            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-            zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Blue);
+            ZmienKolorCzcionki(Brushes.Blue);
             AktualizujPasekPostepu();
         }
 
@@ -88,6 +64,12 @@ namespace TextEditorApp
             var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
             zakresTekstu.ApplyPropertyValue(TextElement.FontFamilyProperty, new FontFamily((KrojCzcionkiComboBox.SelectedItem as ComboBoxItem)?.Content.ToString()));
             AktualizujPasekPostepu();
+        }
+
+        private void ZmienKolorCzcionki(Brush kolor)
+        {
+            var zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
+            zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, kolor);
         }
 
         private void AktualizujPasekPostepu()
