@@ -1,42 +1,72 @@
-<Window x:Class="GraWKosci.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Gra w Kości" Height="450" Width="800">
-    <Grid Background="#F5F5DC">
-        <TextBlock Text="Gra w Kości. Autor: 000000000" 
-                   Foreground="#A52A2A" FontSize="20" 
-                   HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,50,0,0">
-            <TextBlock Text="Ustawienia:" FontSize="16"/>
-            <StackPanel Orientation="Horizontal" Margin="0,10">
-                <TextBlock Text="Liczba kości:" Margin="0,0,10,0"/>
-                <Slider x:Name="SuwakLiczbaKosci" Minimum="1" Maximum="6" Value="1" Width="100"/>
-                <TextBlock x:Name="EtykietaLiczbaKosci" Text="1" Margin="10,0,0,0"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,10">
-                <TextBlock Text="Liczba ścian:" Margin="0,0,10,0"/>
-                <Slider x:Name="SuwakLiczbaScian" Minimum="4" Maximum="10" Value="6" Width="100"/>
-                <TextBlock x:Name="EtykietaLiczbaScian" Text="6" Margin="10,0,0,0"/>
-            </StackPanel>
-        </StackPanel>
+namespace GraWKosci
+{
+    public partial class MainWindow : Window
+    {
+        private Random losowaLiczba = new Random(); // Generator liczb losowych
+        private int wynikCalkowity = 0; // Wynik całkowity gry
 
-        <Button Content="Rzuć Kośćmi" 
-                x:Name="PrzyciskRzut" 
-                Background="#D2691E" Foreground="White" 
-                HorizontalAlignment="Center" VerticalAlignment="Top" 
-                Width="150" Margin="0,180,0,0" Click="PrzyciskRzut_Click"/>
+        public MainWindow()
+        {
+            InitializeComponent();
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,250,0,0">
-            <StackPanel x:Name="PanelWynikiKosci" Orientation="Horizontal" Margin="0,10"/>
-            <TextBlock x:Name="WynikAktualnegoRzutu" Text="Wynik tego losowania: 0" Margin="0,10"/>
-            <TextBlock x:Name="WynikCalkowityGry" Text="Wynik gry: 0" Margin="0,10"/>
-        </StackPanel>
+            // Aktualizacja etykiet przy zmianie wartości na suwakach
+            SuwakLiczbaKosci.ValueChanged += AktualizujEtykieteLiczbaKosci;
+            SuwakLiczbaScian.ValueChanged += AktualizujEtykieteLiczbaScian;
+        }
 
-        <Button Content="Resetuj Wynik" 
-                x:Name="PrzyciskReset" 
-                Background="#D2691E" Foreground="White" 
-                HorizontalAlignment="Center" VerticalAlignment="Bottom" 
-                Width="150" Margin="0,10,0,10" Click="PrzyciskReset_Click"/>
-    </Grid>
-</Window>
+        // Aktualizacja etykiety dla liczby kości
+        private void AktualizujEtykieteLiczbaKosci(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            EtykietaLiczbaKosci.Text = ((int)SuwakLiczbaKosci.Value).ToString();
+        }
+
+        // Aktualizacja etykiety dla liczby ścian
+        private void AktualizujEtykieteLiczbaScian(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            EtykietaLiczbaScian.Text = ((int)SuwakLiczbaScian.Value).ToString();
+        }
+
+        // Obsługa przycisku "Rzuć Kośćmi"
+        private void PrzyciskRzut_Click(object sender, RoutedEventArgs e)
+        {
+            PanelWynikiKosci.Children.Clear(); // Czyszczenie panelu z obrazami kości
+            int liczbaKosci = (int)SuwakLiczbaKosci.Value;
+            int liczbaScian = (int)SuwakLiczbaScian.Value;
+
+            int sumaRzutu = 0; // Suma oczek w aktualnym rzucie
+            for (int i = 0; i < liczbaKosci; i++)
+            {
+                int wynikKosci = losowaLiczba.Next(1, liczbaScian + 1);
+                sumaRzutu += wynikKosci;
+
+                // Dodanie obrazu kości
+                var obrazKosci = new Image
+                {
+                    Source = new BitmapImage(new Uri($"pack://application:,,,/Images/dice_{wynikKosci}.png")),
+                    Width = 50,
+                    Height = 50,
+                    Margin = new Thickness(5)
+                };
+                PanelWynikiKosci.Children.Add(obrazKosci);
+            }
+
+            wynikCalkowity += sumaRzutu; // Dodanie sumy rzutu do wyniku całkowitego
+            WynikAktualnegoRzutu.Text = $"Wynik tego losowania: {sumaRzutu}";
+            WynikCalkowityGry.Text = $"Wynik gry: {wynikCalkowity}";
+        }
+
+        // Obsługa przycisku "Resetuj Wynik"
+        private void PrzyciskReset_Click(object sender, RoutedEventArgs e)
+        {
+            wynikCalkowity = 0; // Reset wyniku całkowitego
+            WynikAktualnegoRzutu.Text = "Wynik tego losowania: 0";
+            WynikCalkowityGry.Text = "Wynik gry: 0";
+            PanelWynikiKosci.Children.Clear(); // Czyszczenie panelu z obrazami kości
+        }
+    }
+}
