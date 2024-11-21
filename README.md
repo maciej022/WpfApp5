@@ -1,27 +1,67 @@
-<Window x:Class="GraWKosci.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Gra w Kości" Height="600" Width="800" Background="#F5F5DC">
-    <Grid Margin="10">
-        <!-- Tytuł -->
-        <TextBlock Text="Gra w kości" FontSize="24" FontWeight="Bold" Foreground="#A52A2A"
-                   HorizontalAlignment="Center" Margin="0,10,0,0"/>
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
-        <!-- Suwak -->
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0,50,0,0">
-            <TextBlock Text="Liczba kości:" FontSize="14" Margin="0,5"/>
-            <Slider x:Name="sliderLiczbaKosci" Minimum="1" Maximum="6" Value="1" TickFrequency="1" IsSnapToTickEnabled="True"
-                    ValueChanged="SliderLiczbaKosci_ValueChanged"/>
-            <TextBlock x:Name="labelLiczbaKosci" Text="1" FontSize="14" Margin="0,5" HorizontalAlignment="Center"/>
-        </StackPanel>
+namespace GraWKosci
+{
+    public partial class MainWindow : Window
+    {
+        private int wynikCalkowity = 0;
 
-        <!-- Kostki -->
-        <WrapPanel x:Name="panelObrazow" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,150,0,0"/>
+        public MainWindow()
+        {
+            InitializeComponent();
+            UaktualnijKostki(); // Inicjalizuj wyświetlanie kostek
+        }
 
-        <!-- Wyniki i Przycisk Rzutu -->
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20">
-            <Button x:Name="buttonRzuc" Content="Rzuć kośćmi" Width="150" Height="40" Background="#D2691E" Foreground="White" Click="buttonRzuc_Click"/>
-            <TextBlock x:Name="labelWynik" Text="Wynik: 0" FontSize="18" Margin="10,20,10,0" HorizontalAlignment="Center"/>
-        </StackPanel>
-    </Grid>
-</Window>
+        private void SliderLiczbaKosci_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            labelLiczbaKosci.Text = ((int)sliderLiczbaKosci.Value).ToString();
+            UaktualnijKostki();
+        }
+
+        private void UaktualnijKostki()
+        {
+            int liczbaKosci = (int)sliderLiczbaKosci.Value;
+
+            // Wyczyszczenie poprzednich obrazów
+            panelObrazow.Children.Clear();
+
+            // Dodawanie obrazów
+            for (int i = 0; i < liczbaKosci; i++)
+            {
+                Image obraz = new Image
+                {
+                    Width = 80,
+                    Height = 80,
+                    Margin = new Thickness(5),
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Images/kostkanieznane.png")) // Obraz dla stanu początkowego
+                };
+                panelObrazow.Children.Add(obraz);
+            }
+        }
+
+        private void buttonRzuc_Click(object sender, RoutedEventArgs e)
+        {
+            int liczbaKosci = (int)sliderLiczbaKosci.Value;
+            Random random = new Random();
+            int wynikRzutu = 0;
+
+            for (int i = 0; i < panelObrazow.Children.Count; i++)
+            {
+                int rzut = random.Next(1, 7); // Losuje wynik od 1 do 6
+                wynikRzutu += rzut;
+
+                // Aktualizuj obraz kości na podstawie wyniku
+                if (panelObrazow.Children[i] is Image kostka)
+                {
+                    kostka.Source = new BitmapImage(new Uri($"pack://application:,,,/Images/kostka{rzut}.png"));
+                }
+            }
+
+            wynikCalkowity += wynikRzutu;
+            labelWynik.Text = $"Wynik rzutu: {wynikRzutu}\nWynik całkowity: {wynikCalkowity}";
+        }
+    }
+}
