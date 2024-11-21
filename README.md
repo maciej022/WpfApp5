@@ -1,67 +1,42 @@
-using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+<Window x:Class="GraWKosci.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gra w Kości" Height="450" Width="800">
+    <Grid Background="#F5F5DC">
+        <TextBlock Text="Gra w Kości. Autor: 000000000" 
+                   Foreground="#A52A2A" FontSize="20" 
+                   HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,10,0,0"/>
 
-namespace GraWKosci
-{
-    public partial class MainWindow : Window
-    {
-        private int wynikCalkowity = 0;
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,50,0,0">
+            <TextBlock Text="Ustawienia:" FontSize="16"/>
+            <StackPanel Orientation="Horizontal" Margin="0,10">
+                <TextBlock Text="Liczba kości:" Margin="0,0,10,0"/>
+                <Slider x:Name="SuwakLiczbaKosci" Minimum="1" Maximum="6" Value="1" Width="100"/>
+                <TextBlock x:Name="EtykietaLiczbaKosci" Text="1" Margin="10,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10">
+                <TextBlock Text="Liczba ścian:" Margin="0,0,10,0"/>
+                <Slider x:Name="SuwakLiczbaScian" Minimum="4" Maximum="10" Value="6" Width="100"/>
+                <TextBlock x:Name="EtykietaLiczbaScian" Text="6" Margin="10,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
 
-        public MainWindow()
-        {
-            InitializeComponent();
-            UaktualnijKostki(); // Inicjalizuj wyświetlanie kostek
-        }
+        <Button Content="Rzuć Kośćmi" 
+                x:Name="PrzyciskRzut" 
+                Background="#D2691E" Foreground="White" 
+                HorizontalAlignment="Center" VerticalAlignment="Top" 
+                Width="150" Margin="0,180,0,0" Click="PrzyciskRzut_Click"/>
 
-        private void SliderLiczbaKosci_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            labelLiczbaKosci.Text = ((int)sliderLiczbaKosci.Value).ToString();
-            UaktualnijKostki();
-        }
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,250,0,0">
+            <StackPanel x:Name="PanelWynikiKosci" Orientation="Horizontal" Margin="0,10"/>
+            <TextBlock x:Name="WynikAktualnegoRzutu" Text="Wynik tego losowania: 0" Margin="0,10"/>
+            <TextBlock x:Name="WynikCalkowityGry" Text="Wynik gry: 0" Margin="0,10"/>
+        </StackPanel>
 
-        private void UaktualnijKostki()
-        {
-            int liczbaKosci = (int)sliderLiczbaKosci.Value;
-
-            // Wyczyszczenie poprzednich obrazów
-            panelObrazow.Children.Clear();
-
-            // Dodawanie obrazów
-            for (int i = 0; i < liczbaKosci; i++)
-            {
-                Image obraz = new Image
-                {
-                    Width = 80,
-                    Height = 80,
-                    Margin = new Thickness(5),
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Images/kostkanieznane.png")) // Obraz dla stanu początkowego
-                };
-                panelObrazow.Children.Add(obraz);
-            }
-        }
-
-        private void buttonRzuc_Click(object sender, RoutedEventArgs e)
-        {
-            int liczbaKosci = (int)sliderLiczbaKosci.Value;
-            Random random = new Random();
-            int wynikRzutu = 0;
-
-            for (int i = 0; i < panelObrazow.Children.Count; i++)
-            {
-                int rzut = random.Next(1, 7); // Losuje wynik od 1 do 6
-                wynikRzutu += rzut;
-
-                // Aktualizuj obraz kości na podstawie wyniku
-                if (panelObrazow.Children[i] is Image kostka)
-                {
-                    kostka.Source = new BitmapImage(new Uri($"pack://application:,,,/Images/kostka{rzut}.png"));
-                }
-            }
-
-            wynikCalkowity += wynikRzutu;
-            labelWynik.Text = $"Wynik rzutu: {wynikRzutu}\nWynik całkowity: {wynikCalkowity}";
-        }
-    }
-}
+        <Button Content="Resetuj Wynik" 
+                x:Name="PrzyciskReset" 
+                Background="#D2691E" Foreground="White" 
+                HorizontalAlignment="Center" VerticalAlignment="Bottom" 
+                Width="150" Margin="0,10,0,10" Click="PrzyciskReset_Click"/>
+    </Grid>
+</Window>
