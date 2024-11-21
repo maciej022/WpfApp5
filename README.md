@@ -1,31 +1,75 @@
-<Window x:Class="GraWKosci.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Gra w Kości" Height="600" Width="800" Background="#F5F5DC">
-    <Grid Margin="10">
-        <!-- Tytuł -->
-        <TextBlock Text="Gra w kości" FontSize="24" FontWeight="Bold" Foreground="#A52A2A"
-                   HorizontalAlignment="Center" Margin="0,10,0,0"/>
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
-        <!-- Suwaki -->
-        <StackPanel Orientation="Vertical" Margin="10,50,10,0">
-            <TextBlock Text="Liczba kości:" FontSize="14" Margin="0,5"/>
-            <Slider x:Name="sliderLiczbaKosci" Minimum="1" Maximum="6" Value="1" TickFrequency="1" IsSnapToTickEnabled="True"/>
-            <TextBlock x:Name="labelLiczbaKosci" Text="1" FontSize="14" Margin="0,5"/>
+namespace GraWKosci
+{
+    public partial class MainWindow : Window
+    {
+        private int wynikCalkowity = 0;
 
-            <TextBlock Text="Liczba ścian na kości:" FontSize="14" Margin="0,15"/>
-            <Slider x:Name="sliderLiczbaScian" Minimum="4" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"/>
-            <TextBlock x:Name="labelLiczbaScian" Text="6" FontSize="14" Margin="0,5"/>
-        </StackPanel>
+        public MainWindow()
+        {
+            InitializeComponent();
+            sliderLiczbaKosci.ValueChanged += SliderLiczbaKosci_ValueChanged;
+            sliderLiczbaScian.ValueChanged += SliderLiczbaScian_ValueChanged;
+        }
 
-        <!-- Przycisk i Wyniki -->
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,150,0,0">
-            <Button x:Name="buttonRzuc" Content="Rzuć kośćmi" Width="150" Height="40" Background="#D2691E" Foreground="White" Click="buttonRzuc_Click"/>
-            <TextBlock x:Name="labelWynik" Text="Wynik: " FontSize="18" Margin="0,20,0,0"/>
-            <Button Content="Zresetuj wynik" Width="150" Height="40" Margin="0,10,0,0" Click="buttonResetuj_Click"/>
-        </StackPanel>
+        private void SliderLiczbaKosci_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            labelLiczbaKosci.Text = ((int)sliderLiczbaKosci.Value).ToString();
+        }
 
-        <!-- Miejsce na obrazy -->
-        <WrapPanel x:Name="panelObrazow" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,20,0,0"/>
-    </Grid>
-</Window>
+        private void SliderLiczbaScian_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            labelLiczbaScian.Text = ((int)sliderLiczbaScian.Value).ToString();
+        }
+
+        private void buttonRzuc_Click(object sender, RoutedEventArgs e)
+        {
+            int liczbaKosci = (int)sliderLiczbaKosci.Value;
+            int liczbaScian = (int)sliderLiczbaScian.Value;
+
+            Random random = new Random();
+            int wynikRzutu = 0;
+
+            panelObrazow.Children.Clear(); // Wyczyść poprzednie obrazy
+
+            for (int i = 0; i < liczbaKosci; i++)
+            {
+                int rzut = random.Next(1, liczbaScian + 1);
+                wynikRzutu += rzut;
+
+                // Wyświetlanie obrazka wyniku rzutu
+                Image obraz = new Image();
+                obraz.Width = 50;
+                obraz.Height = 50;
+
+                try
+                {
+                    // Wczytaj obraz z folderu "Images"
+                    obraz.Source = new BitmapImage(new Uri($"pack://application:,,,/Images/{rzut}.png"));
+                }
+                catch
+                {
+                    // Jeśli obraz nie istnieje, wyświetl znak zapytania
+                    obraz.Source = new BitmapImage(new Uri($"pack://application:,,,/Images/question.png"));
+                }
+
+                panelObrazow.Children.Add(obraz);
+            }
+
+            wynikCalkowity += wynikRzutu;
+            labelWynik.Text = $"Suma rzutów: {wynikRzutu}\nWynik całkowity: {wynikCalkowity}";
+        }
+
+        private void buttonResetuj_Click(object sender, RoutedEventArgs e)
+        {
+            wynikCalkowity = 0;
+            labelWynik.Text = "Wynik: 0";
+            panelObrazow.Children.Clear();
+        }
+    }
+}
+
