@@ -1,125 +1,31 @@
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
+<Window x:Class="GraWKosci.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gra w Kości" Height="600" Width="800" Background="#F5F5DC">
+    <Grid Margin="10">
+        <!-- Tytuł -->
+        <TextBlock Text="Gra w kości" FontSize="24" FontWeight="Bold" Foreground="#A52A2A"
+                   HorizontalAlignment="Center" Margin="0,10,0,0"/>
 
-namespace WpfApp3
-{
-    public partial class MainWindow : Window
-    {
-        private TextRange _zakresTekstu;
+        <!-- Suwaki -->
+        <StackPanel Orientation="Vertical" Margin="10,50,10,0">
+            <TextBlock Text="Liczba kości:" FontSize="14" Margin="0,5"/>
+            <Slider x:Name="sliderLiczbaKosci" Minimum="1" Maximum="6" Value="1" TickFrequency="1" IsSnapToTickEnabled="True"/>
+            <TextBlock x:Name="labelLiczbaKosci" Text="1" FontSize="14" Margin="0,5"/>
 
-        public MainWindow()
-        {
-            InitializeComponent();
+            <TextBlock Text="Liczba ścian na kości:" FontSize="14" Margin="0,15"/>
+            <Slider x:Name="sliderLiczbaScian" Minimum="4" Maximum="10" Value="6" TickFrequency="1" IsSnapToTickEnabled="True"/>
+            <TextBlock x:Name="labelLiczbaScian" Text="6" FontSize="14" Margin="0,5"/>
+        </StackPanel>
 
-            // Sprawdzamy, czy EdytorTekstu jest gotowy do użycia
-            this.Loaded += (sender, e) =>
-            {
-                if (EdytorTekstu != null && EdytorTekstu.Document != null)
-                {
-                    _zakresTekstu = new TextRange(EdytorTekstu.Document.ContentStart, EdytorTekstu.Document.ContentEnd);
-                }
-                else
-                {
-                    MessageBox.Show("Edytor tekstu nie został poprawnie zainicjalizowany.");
-                }
+        <!-- Przycisk i Wyniki -->
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,150,0,0">
+            <Button x:Name="buttonRzuc" Content="Rzuć kośćmi" Width="150" Height="40" Background="#D2691E" Foreground="White" Click="buttonRzuc_Click"/>
+            <TextBlock x:Name="labelWynik" Text="Wynik: " FontSize="18" Margin="0,20,0,0"/>
+            <Button Content="Zresetuj wynik" Width="150" Height="40" Margin="0,10,0,0" Click="buttonResetuj_Click"/>
+        </StackPanel>
 
-                // Ustawienie początkowego wyboru w ComboBox
-                KrojCzcionkiComboBox.SelectedIndex = 0;
-            };
-        }
-
-        private void PogrubienieCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            ZmienFormatowanie();
-        }
-
-        private void KursywaCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            ZmienFormatowanie();
-        }
-
-        private void PodkreslenieCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            ZmienFormatowanie();
-        }
-
-        private void RozmiarCzcionkiSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            ZmienFormatowanie();
-        }
-
-        private void KolorRadioButton_Click(object sender, RoutedEventArgs e)
-        {
-            ZmienKolorCzcionki();
-        }
-
-        private void KrojCzcionkiComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ZmienFormatowanie();
-        }
-
-        private void ZmienFormatowanie()
-        {
-            // Zabezpieczenie przed null
-            if (_zakresTekstu != null)
-            {
-                // Pogrubienie
-                _zakresTekstu.ApplyPropertyValue(TextElement.FontWeightProperty, PogrubienieCheckBox.IsChecked == true ? FontWeights.Bold : FontWeights.Normal);
-                // Kursywa
-                _zakresTekstu.ApplyPropertyValue(TextElement.FontStyleProperty, KursywaCheckBox.IsChecked == true ? FontStyles.Italic : FontStyles.Normal);
-                // Podkreślenie
-                _zakresTekstu.ApplyPropertyValue(Inline.TextDecorationsProperty, PodkreslenieCheckBox.IsChecked == true ? TextDecorations.Underline : null);
-                // Rozmiar czcionki
-                _zakresTekstu.ApplyPropertyValue(TextElement.FontSizeProperty, RozmiarCzcionkiSlider.Value);
-                // Krój czcionki
-                var wybranaCzcionka = (KrojCzcionkiComboBox.SelectedItem as ComboBoxItem)?.Content.ToString();
-                if (wybranaCzcionka != null)
-                {
-                    _zakresTekstu.ApplyPropertyValue(TextElement.FontFamilyProperty, new FontFamily(wybranaCzcionka));
-                }
-            }
-            else
-            {
-                MessageBox.Show("Zakres tekstu nie został poprawnie zainicjalizowany.");
-            }
-
-            AktualizujPasekPostepu();
-        }
-
-        private void ZmienKolorCzcionki()
-        {
-            // Zabezpieczenie przed null
-            if (_zakresTekstu != null)
-            {
-                if (CzarnyKolor.IsChecked == true)
-                    _zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Black);
-                else if (CzerwonyKolor.IsChecked == true)
-                    _zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Red);
-                else if (NiebieskiKolor.IsChecked == true)
-                    _zakresTekstu.ApplyPropertyValue(TextElement.ForegroundProperty, Brushes.Blue);
-            }
-            else
-            {
-                MessageBox.Show("Zakres tekstu nie został poprawnie zainicjalizowany.");
-            }
-
-            AktualizujPasekPostepu();
-        }
-
-        private void AktualizujPasekPostepu()
-        {
-            int ustawieniaUzyte = 0;
-
-            if (PogrubienieCheckBox.IsChecked == true) ustawieniaUzyte++;
-            if (KursywaCheckBox.IsChecked == true) ustawieniaUzyte++;
-            if (PodkreslenieCheckBox.IsChecked == true) ustawieniaUzyte++;
-            if (RozmiarCzcionkiSlider.Value != 12) ustawieniaUzyte++;
-            if (CzarnyKolor.IsChecked == true || CzerwonyKolor.IsChecked == true || NiebieskiKolor.IsChecked == true) ustawieniaUzyte++;
-            if (KrojCzcionkiComboBox.SelectedIndex != 0) ustawieniaUzyte++;
-
-            PasekPostepu.Value = ustawieniaUzyte;
-        }
-    }
-}
+        <!-- Miejsce na obrazy -->
+        <WrapPanel x:Name="panelObrazow" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,20,0,0"/>
+    </Grid>
+</Window>
