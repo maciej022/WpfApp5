@@ -4,40 +4,49 @@ class Program
 {
     static void Main()
     {
-        Console.Write("Podaj liczbę wierszy: ");
-        int rows = int.Parse(Console.ReadLine());
+        Console.Write("Podaj tekst: ");
+        string input = Console.ReadLine();
 
-        Console.Write("Podaj liczbę kolumn: ");
-        int cols = int.Parse(Console.ReadLine());
-
-        Random rand = new Random();
-        int[,] array = new int[rows, cols];
-
-        for (int i = 0; i < rows; i++)
+        if (string.IsNullOrEmpty(input))
         {
-            for (int j = 0; j < cols; j++)
+            Console.WriteLine("Liczba samogłosek: 0");
+            Console.WriteLine("Tekst po usunięciu powtórzeń: ");
+            return;
+        }
+
+        char[] vowels = { 'a', 'ą', 'e', 'ę', 'i', 'o', 'u', 'y', 'A', 'Ą', 'E', 'Ę', 'I', 'O', 'U', 'Y' };
+        int vowelCount = 0;
+
+        // Liczenie samogłosek
+        foreach (char c in input)
+        {
+            foreach (char v in vowels)
             {
-                array[i, j] = i % 2 == 0 ? rand.Next(0, 101) : rand.Next(-100, 1);
+                if (c == v)
+                {
+                    vowelCount++;
+                    break;
+                }
             }
         }
 
-        Console.WriteLine("\nWygenerowana tablica:");
-        double[] rowAverages = new double[rows];
+        // Usuwanie powtórzeń znaków obok siebie
+        char[] result = new char[input.Length];
+        int index = 0;
 
-        for (int i = 0; i < rows; i++)
+        result[index++] = input[0];
+
+        for (int i = 1; i < input.Length; i++)
         {
-            int sum = 0;
-            for (int j = 0; j < cols; j++)
+            if (input[i] != input[i - 1])
             {
-                Console.Write(array[i, j] + "\t");
-                sum += array[i, j];
+                result[index++] = input[i];
             }
-            rowAverages[i] = (double)sum / cols;
-            Console.WriteLine($"| Średnia: {rowAverages[i]:F2}");
         }
 
-        Console.WriteLine("\nLiczby parzyste większe od średniej w swoim wierszu:");
-        for (int i = 0; i < rows; i++)
-        {
-            Console.Write($"Wiersz {i}: ")
-            
+        string cleanedText = new string(result, 0, index);
+
+        Console.WriteLine($"Liczba samogłosek: {vowelCount}");
+        Console.WriteLine($"Tekst po usunięciu powtórzeń: {cleanedText}");
+    }
+}
