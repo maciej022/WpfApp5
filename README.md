@@ -1,27 +1,43 @@
-document.getElementById("przycisk").addEventListener("click", function() {
-    let waga = parseFloat(document.getElementById("waga").value);
-    let wzrost = parseFloat(document.getElementById("wzrost").value) / 100; // Zamiana cm na metry
+using System;
 
-    if (!waga || !wzrost || wzrost <= 0 || waga <= 0) {
-        pokazWynik("Podaj poprawne dane!", "red");
-        return;
-    }
+class Program
+{
+    static void Main()
+    {
+        Console.Write("Podaj liczbę wierszy: ");
+        int rows = int.Parse(Console.ReadLine());
 
-    let bmi = waga / (wzrost * wzrost);
-    let kategoria = okreslKategorie(bmi);
+        Console.Write("Podaj liczbę kolumn: ");
+        int cols = int.Parse(Console.ReadLine());
 
-    pokazWynik(`Twoje BMI: ${bmi.toFixed(2)} (${kategoria})`, "black");
-});
+        Random rand = new Random();
+        int[,] array = new int[rows, cols];
 
-function okreslKategorie(bmi) {
-    if (bmi < 18.5) return "Niedowaga";
-    if (bmi < 24.9) return "Prawidłowa waga";
-    if (bmi < 29.9) return "Nadwaga";
-    return "Otyłość";
-}
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                array[i, j] = i % 2 == 0 ? rand.Next(0, 101) : rand.Next(-100, 1);
+            }
+        }
 
-function pokazWynik(tekst, kolor) {
-    let wynik = document.getElementById("wynik");
-    wynik.innerText = tekst;
-    wynik.style.color = kolor;
-}
+        Console.WriteLine("\nWygenerowana tablica:");
+        double[] rowAverages = new double[rows];
+
+        for (int i = 0; i < rows; i++)
+        {
+            int sum = 0;
+            for (int j = 0; j < cols; j++)
+            {
+                Console.Write(array[i, j] + "\t");
+                sum += array[i, j];
+            }
+            rowAverages[i] = (double)sum / cols;
+            Console.WriteLine($"| Średnia: {rowAverages[i]:F2}");
+        }
+
+        Console.WriteLine("\nLiczby parzyste większe od średniej w swoim wierszu:");
+        for (int i = 0; i < rows; i++)
+        {
+            Console.Write($"Wiersz {i}: ")
+            
