@@ -1,70 +1,87 @@
-using System;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 
-namespace PasswordGenerator
+namespace WpfApp3
 {
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
     public partial class MainWindow : Window
     {
-        private string lowercaseLetters;
-        private string uppercaseLetters;
-        private string numbers;
-        private string specialCharacters;
-
         public MainWindow()
         {
             InitializeComponent();
+        }
+        private string MaleiDuzeLitery;
+        private string znakiSpecjalne;
+        private string cyfry;
+        private string haslo;
+        Random losuj = new Random();
+        private void generuj_btn_Click(object sender, RoutedEventArgs e)
+        {
+            /* string haslo;
+             MaleiDuzeLitery = "abcdefgshijklmoprstuwxyzABCDEFGHIJKLMNOPRSTUWXYZ";
+             znakiSpecjalne = "!@#$%^&*";
+             int[] cyfry = new int[10];
+             int ile = 0;
+             ileznaow_txt.Text = ile.ToString();
+             if(malelitery_check.IsChecked == true)
+             {
+                 //Random rnd = new Random(ile);
 
-            // Inicjalizacja zmiennych zamiast const
-            lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
-            uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            numbers = "0123456789";
-            specialCharacters = "!@#$%^&*()-_=+[]{}|;:,.<>?/";
+             }
+             if (cyfry_check.IsChecked == true)
+             {
+
+             }
+             if (specjalne_check.IsChecked == true)
+             {
+
+             }
+             Random rnd = new Random();
+            // for (int i = 0; i < Cyfry.Length; i++)
+
+             */
+            MaleiDuzeLitery = "abcdefgshijklmoprstuwxyzABCDEFGHIJKLMNOPRSTUWXYZ";
+            znakiSpecjalne = "!@#$%^&*";
+            cyfry = "1234567890";
+            if (malelitery_check.IsChecked == true) 
+            {
+           //     if (!int.TryParse(ileznaow_txt.Text)
+               
+            /*    string wybrane = MaleiDuzeLitery;
+                if (malelitery_check.IsChecked != true)
+                {
+                    wybrane += malelitery_check;
+                }
+            */
+           // Random losuj = new Random();
+                losuj.Next(MaleiDuzeLitery.Length);
+                
+            }
+            if (cyfry_check.IsChecked == true)
+            {
+                losuj.Next(cyfry.Length);
+            }
+            if(specjalne_check.IsChecked == true)
+            {
+                losuj.Next(znakiSpecjalne.Length);
+               // znakiSpecjalne == haslo.
+            }
+
         }
 
-        private void GeneratePassword_Click(object sender, RoutedEventArgs e)
+        private void Zatwierdź_btn_Click(object sender, RoutedEventArgs e)
         {
-            if (!int.TryParse(PasswordLengthTextBox.Text, out int passwordLength) || passwordLength < 4)
-            {
-                MessageBox.Show("Podaj poprawną długość hasła (min. 4 znaki)", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            string characterSet = lowercaseLetters;
-            if (IncludeUppercaseCheckBox.IsChecked == true) characterSet += uppercaseLetters;
-            if (IncludeNumbersCheckBox.IsChecked == true) characterSet += numbers;
-            if (IncludeSpecialCharsCheckBox.IsChecked == true) characterSet += specialCharacters;
-
-            if (string.IsNullOrEmpty(characterSet))
-            {
-                MessageBox.Show("Wybierz przynajmniej jeden zestaw znaków!", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            Random random = new Random();
-            StringBuilder password = new StringBuilder();
-
-            for (int i = 0; i < passwordLength; i++)
-            {
-                password.Append(characterSet[random.Next(characterSet.Length)]);
-            }
-
-            GeneratedPasswordTextBox.Text = password.ToString();
-        }
-
-        private void PasswordLengthTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !int.TryParse(e.Text, out _); // Zapobiega wpisywaniu liter
-        }
-
-        private void CopyPassword_Click(object sender, RoutedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(GeneratedPasswordTextBox.Text))
-            {
-                Clipboard.SetText(GeneratedPasswordTextBox.Text);
-                MessageBox.Show("Hasło skopiowane do schowka!", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            MessageBox.Show($"Dane pracownika:{imie_txt.Text} {nazwisko_txt.Text} {Stanowisko_combo.SelectedItem.ToString()} Hasło:");
         }
     }
 }
