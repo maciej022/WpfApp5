@@ -1,52 +1,70 @@
 using System;
+using System.Text;
+using System.Windows;
+using System.Windows.Input;
 
-class Program
+namespace PasswordGenerator
 {
-    static void Main()
+    public partial class MainWindow : Window
     {
-        Console.Write("Podaj tekst: ");
-        string input = Console.ReadLine();
+        private string lowercaseLetters;
+        private string uppercaseLetters;
+        private string numbers;
+        private string specialCharacters;
 
-        if (string.IsNullOrEmpty(input))
+        public MainWindow()
         {
-            Console.WriteLine("Liczba samogłosek: 0");
-            Console.WriteLine("Tekst po usunięciu powtórzeń: ");
-            return;
+            InitializeComponent();
+
+            // Inicjalizacja zmiennych zamiast const
+            lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
+            uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            numbers = "0123456789";
+            specialCharacters = "!@#$%^&*()-_=+[]{}|;:,.<>?/";
         }
 
-        char[] vowels = { 'a', 'ą', 'e', 'ę', 'i', 'o', 'u', 'y', 'A', 'Ą', 'E', 'Ę', 'I', 'O', 'U', 'Y' };
-        int vowelCount = 0;
-
-        // Liczenie samogłosek
-        foreach (char c in input)
+        private void GeneratePassword_Click(object sender, RoutedEventArgs e)
         {
-            foreach (char v in vowels)
+            if (!int.TryParse(PasswordLengthTextBox.Text, out int passwordLength) || passwordLength < 4)
             {
-                if (c == v)
-                {
-                    vowelCount++;
-                    break;
-                }
+                MessageBox.Show("Podaj poprawną długość hasła (min. 4 znaki)", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string characterSet = lowercaseLetters;
+            if (IncludeUppercaseCheckBox.IsChecked == true) characterSet += uppercaseLetters;
+            if (IncludeNumbersCheckBox.IsChecked == true) characterSet += numbers;
+            if (IncludeSpecialCharsCheckBox.IsChecked == true) characterSet += specialCharacters;
+
+            if (string.IsNullOrEmpty(characterSet))
+            {
+                MessageBox.Show("Wybierz przynajmniej jeden zestaw znaków!", "Błąd", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            Random random = new Random();
+            StringBuilder password = new StringBuilder();
+
+            for (int i = 0; i < passwordLength; i++)
+            {
+                password.Append(characterSet[random.Next(characterSet.Length)]);
+            }
+
+            GeneratedPasswordTextBox.Text = password.ToString();
+        }
+
+        private void PasswordLengthTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !int.TryParse(e.Text, out _); // Zapobiega wpisywaniu liter
+        }
+
+        private void CopyPassword_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(GeneratedPasswordTextBox.Text))
+            {
+                Clipboard.SetText(GeneratedPasswordTextBox.Text);
+                MessageBox.Show("Hasło skopiowane do schowka!", "Informacja", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
-
-        // Usuwanie powtórzeń znaków obok siebie
-        char[] result = new char[input.Length];
-        int index = 0;
-
-        result[index++] = input[0];
-
-        for (int i = 1; i < input.Length; i++)
-        {
-            if (input[i] != input[i - 1])
-            {
-                result[index++] = input[i];
-            }
-        }
-
-        string cleanedText = new string(result, 0, index);
-
-        Console.WriteLine($"Liczba samogłosek: {vowelCount}");
-        Console.WriteLine($"Tekst po usunięciu powtórzeń: {cleanedText}");
     }
 }
